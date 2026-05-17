@@ -20,6 +20,68 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## DSA Explanation
+
+The Book Management System uses a centralized client-side data model held in React context with `useReducer`. The core data entities are represented as arrays of objects:
+
+- `books`: inventory records storing `availableCopies`, `borrowCount`, category, and metadata
+- `students`: user records tracking current borrowed book IDs
+- `loans`: transaction records storing issue date, due date, returned date, and loan status
+- `categories`: distinct strings used for filtering
+
+This structure simplifies state updates and supports the main business rules: issue, return, overdue detection, and filtering.
+
+## Complexity Analysis
+
+### Issue book flow
+
+- Book search: O(b) where `b` is the number of books
+- Student search: O(s) where `s` is the number of students
+- Duplicate loan check: O(l) where `l` is the number of loans
+- Overall: O(b + s + l)
+
+### Return book flow
+
+- Active loan selection: O(l)
+- Book update: O(b)
+- Student update: O(s)
+- Overall: O(b + s + l)
+
+### List rendering and filtering
+
+- Active loans rendering: O(l)
+- Book category filtering: O(b)
+- Student loan history: O(l + b)
+
+### Overdue status derivation
+
+- Overdue scan: O(l)
+
+These complexities reflect current use of arrays for lookups and state updates. For the app size in this prototype, this is acceptable and keeps the implementation straightforward.
+
+## Trade-offs
+
+### Arrays vs. keyed lookup
+
+Using arrays for books, students, and loans makes the data model simple and easy to mock. The trade-off is linear lookup time for search and validation operations. For larger datasets, converting these arrays to index maps keyed by `id` would improve lookup performance from O(n) to O(1).
+
+### Reducer-based state management
+
+Using `LibraryContext` with `useReducer` centralizes business logic and avoids prop drilling across pages. This adds a small amount of boilerplate, but it improves maintainability and makes actions like `ISSUE_BOOK` and `RETURN_BOOK` easier to reason about.
+
+### Client-only persistence
+
+The current implementation uses mock data and client state only. That is ideal for local prototyping, but it means data is not persisted across refreshes. A backend API or local storage layer would be required for production usage.
+
+### Simplicity vs. scalability
+
+This app prioritizes readability, maintainability, and quick iteration over massive scale. For production, the main scalability improvements would be:
+
+- using indexed lookup tables for books and students
+- memoizing derived datasets like overdue loans
+- moving loan rules to a dedicated service layer
+- adding persistence and API integration
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
