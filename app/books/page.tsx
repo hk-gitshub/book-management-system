@@ -1,17 +1,33 @@
 "use client";
 
 import { useLibrary } from "../../context/LibraryContext";
+import { useModal } from "../../lib/useModal";
+import Modal from "../../components/Modal";
+import AddBookForm from "../../components/AddBookForm";
 
 export default function Books() {
   const { state } = useLibrary();
+  const { isOpen, open, close } = useModal();
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mb-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h1 className="text-3xl font-semibold text-slate-900">Books</h1>
-          <p className="mt-2 text-slate-600">View the library inventory, book categories, availability, and borrow counts.</p>
+        <div className="mb-8 flex items-center justify-between rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <div>
+            <h1 className="text-3xl font-semibold text-slate-900">Books</h1>
+            <p className="mt-2 text-slate-600">View the library inventory, book categories, availability, and borrow counts.</p>
+          </div>
+          <button
+            onClick={open}
+            className="rounded-full bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-700"
+          >
+            + Add Book
+          </button>
         </div>
+
+        <Modal isOpen={isOpen} onClose={close} title="Add a New Book">
+          <AddBookForm onClose={close} />
+        </Modal>
 
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
