@@ -9,8 +9,8 @@ interface IssueBooksFormProps {
 
 function IssueBooksForm({ onClose }: IssueBooksFormProps) {
   const { state, dispatch } = useLibrary();
-  const [selectedStudent, setSelectedStudent] = useState(state.students[0]?.id ?? "");
-  const [selectedBook, setSelectedBook] = useState(state.books[0]?.id ?? "");
+  const [selectedStudent, setSelectedStudent] = useState("");
+  const [selectedBook, setSelectedBook] = useState("");
   const [dueDate, setDueDate] = useState(() => {
     const date = new Date();
     date.setDate(date.getDate() + 14);
@@ -74,6 +74,7 @@ function IssueBooksForm({ onClose }: IssueBooksFormProps) {
           onChange={(event) => setSelectedStudent(event.target.value)}
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
         >
+          <option value="">Chooes a Student</option>
           {state.students.map((student) => (
             <option key={student.id} value={student.id}>
               {student.name}
@@ -89,6 +90,7 @@ function IssueBooksForm({ onClose }: IssueBooksFormProps) {
           onChange={(event) => setSelectedBook(event.target.value)}
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
         >
+          <option value="">Chooes a Book</option>
           {state.books.map((book) => (
             <option key={book.id} value={book.id}>
               {book.title} ({book.availableCopies} available)

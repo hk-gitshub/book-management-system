@@ -13,7 +13,7 @@ function ReturnBooksForm({ onClose }: ReturnBooksFormProps) {
         () => state.loans.filter((loan) => loan.status === "active" || loan.status === "overdue"),
         [state.loans]
     );
-    const [selectedLoanId, setSelectedLoanId] = useState(activeLoans[0]?.loanId ?? "");
+    const [selectedLoanId, setSelectedLoanId] = useState("");
     const [message, setMessage] = useState("");
 
     const handleReturn = () => {

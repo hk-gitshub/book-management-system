@@ -13,6 +13,7 @@ export interface Book {
 export interface Student {
   id: string;
   name: string;
+  gender: "Male" | "Female" | "";
   grade: string;
   borrowedBooks: string[];
 }

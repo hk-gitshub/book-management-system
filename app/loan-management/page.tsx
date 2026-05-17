@@ -64,7 +64,10 @@ export default function LoanManagement() {
                   <div key={loan.loanId} className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
                     <p className="font-semibold text-slate-900">{book?.title ?? loan.bookId}</p>
                     <p className="text-sm text-slate-600">
-                      Borrower: {student?.name ?? loan.studentId} • Due: {loan.dueDate}
+                      Borrower: {student?.name ?? loan.studentId}
+                    </p>
+                    <p className="text-sm text-slate-600">
+                      Due: {loan.dueDate}
                     </p>
                     <span
                       className={`mt-2 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${loan.status === "overdue" ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"
