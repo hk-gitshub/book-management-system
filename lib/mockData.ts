@@ -72,7 +72,7 @@ export const students: Student[] = [
   },
   {
     id: "s4",
-    name: "Mia Gupta",
+    name: "Nisha Gupta",
     gender: "Female",
     grade: "12",
     borrowedBooks: ["b5"],

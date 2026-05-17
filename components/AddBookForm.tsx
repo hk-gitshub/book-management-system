@@ -1,22 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLibrary } from "../context/LibraryContext";
 import type { Book } from "../lib/types";
 
 interface AddBookFormProps {
   onClose: () => void;
+  bookToEdit?: Book;
 }
 
-export default function AddBookForm({ onClose }: AddBookFormProps) {
+export default function AddBookForm({ onClose, bookToEdit }: AddBookFormProps) {
   const { dispatch, state } = useLibrary();
-  const [formData, setFormData] = useState({
-    title: "",
-    author: "",
-    category: "",
-    totalCopies: 1,
-  });
   const [message, setMessage] = useState("");
+  const [formData, setFormData] = useState({
+    title: bookToEdit?.title ?? "",
+    author: bookToEdit?.author ?? "",
+    category: bookToEdit?.category ?? "",
+    totalCopies: bookToEdit?.totalCopies ?? 1,
+  });
+
+  useEffect(() => {
+    if (bookToEdit) {
+      setFormData({
+        title: bookToEdit.title,
+        author: bookToEdit.author,
+        category: bookToEdit.category,
+        totalCopies: bookToEdit.totalCopies,
+      });
+    } else {
+      setFormData({ title: "", author: "", category: "", totalCopies: 1 });
+    }
+  }, [bookToEdit]);
+
+  const isEditMode = Boolean(bookToEdit);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -31,6 +47,30 @@ export default function AddBookForm({ onClose }: AddBookFormProps) {
 
     if (!formData.title || !formData.author || !formData.category) {
       setMessage("Please fill all fields.");
+      return;
+    }
+
+    if (isEditMode && bookToEdit) {
+      const borrowedCount = bookToEdit.totalCopies - bookToEdit.availableCopies;
+      if (formData.totalCopies < borrowedCount) {
+        setMessage(`Total copies must be at least ${borrowedCount} because ${borrowedCount} copies are currently borrowed.`);
+        return;
+      }
+
+      const updatedBook: Book = {
+        ...bookToEdit,
+        title: formData.title,
+        author: formData.author,
+        category: formData.category,
+        totalCopies: formData.totalCopies,
+        availableCopies: bookToEdit.availableCopies + (formData.totalCopies - bookToEdit.totalCopies),
+      };
+
+      dispatch({ type: "UPDATE_BOOK", payload: updatedBook });
+      setMessage("Book updated successfully!");
+      setTimeout(() => {
+        onClose();
+      }, 800);
       return;
     }
 
@@ -114,7 +154,7 @@ export default function AddBookForm({ onClose }: AddBookFormProps) {
           type="submit"
           className="flex-1 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
         >
-          Add Book
+          {isEditMode ? "Update Book" : "Add Book"}
         </button>
         <button
           type="button"
