@@ -10,8 +10,13 @@ interface AddStudentFormProps {
 
 export default function AddStudentForm({ onClose }: AddStudentFormProps) {
   const { dispatch } = useLibrary();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    gender: "" | "Male" | "Female";
+    grade: string;
+  }>({
     name: "",
+    gender: "",
     grade: "",
   });
   const [message, setMessage] = useState("");
@@ -27,7 +32,7 @@ export default function AddStudentForm({ onClose }: AddStudentFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.grade) {
+    if (!formData.name || !formData.gender || !formData.grade) {
       setMessage("Please fill all fields.");
       return;
     }
@@ -35,6 +40,7 @@ export default function AddStudentForm({ onClose }: AddStudentFormProps) {
     const newStudent: Student = {
       id: `s${Date.now()}`,
       name: formData.name,
+      gender: formData.gender,
       grade: formData.grade,
       borrowedBooks: [],
     };
@@ -58,6 +64,23 @@ export default function AddStudentForm({ onClose }: AddStudentFormProps) {
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
           placeholder="Enter student name"
         />
+      </label>
+
+      <label className="block">
+        <span className="text-sm font-medium text-slate-700">Grade</span>
+        <select
+          name="gender"
+          value={formData.gender}
+          onChange={handleChange}
+          className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
+        >
+          <option value="">Select a Gender</option>
+          {["Male", "Female"].map((gender) => (
+            <option key={gender} value={gender}>
+              {gender}
+            </option>
+          ))}
+        </select>
       </label>
 
       <label className="block">
