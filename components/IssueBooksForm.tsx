@@ -5,9 +5,10 @@ import { useLibrary } from "@/context/LibraryContext";
 
 interface IssueBooksFormProps {
   onClose: () => void;
+  setMessage?: any
 }
 
-function IssueBooksForm({ onClose }: IssueBooksFormProps) {
+function IssueBooksForm({ onClose, setMessage }: IssueBooksFormProps) {
   const { state, dispatch } = useLibrary();
   const [selectedStudent, setSelectedStudent] = useState("");
   const [selectedBook, setSelectedBook] = useState("");
@@ -16,7 +17,7 @@ function IssueBooksForm({ onClose }: IssueBooksFormProps) {
     date.setDate(date.getDate() + 14);
     return date.toISOString().slice(0, 10);
   });
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
 
   const handleIssue = () => {
     if (!selectedStudent || !selectedBook) {
@@ -61,8 +62,9 @@ function IssueBooksForm({ onClose }: IssueBooksFormProps) {
       },
     });
 
-    setMessage("Book issued successfully.");
-    onClose();
+    setMessage("Congrtualation, Book issued successfully.");
+    // onClose();
+    // setMessage("")
   };
 
   return (
@@ -117,7 +119,7 @@ function IssueBooksForm({ onClose }: IssueBooksFormProps) {
         Issue Book
       </button>
 
-      {message ? <p className="text-sm text-slate-600">{message}</p> : null}
+      {/* {message ? <p className="text-sm text-slate-600">{message}</p> : null} */}
     </div>
   );
 }

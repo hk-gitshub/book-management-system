@@ -6,9 +6,10 @@ import type { Student } from "../lib/types";
 
 interface AddStudentFormProps {
   onClose: () => void;
+  setMessage: any
 }
 
-export default function AddStudentForm({ onClose }: AddStudentFormProps) {
+export default function AddStudentForm({ onClose, setMessage }: AddStudentFormProps) {
   const { dispatch } = useLibrary();
   const [formData, setFormData] = useState<{
     name: string;
@@ -19,7 +20,7 @@ export default function AddStudentForm({ onClose }: AddStudentFormProps) {
     gender: "",
     grade: "",
   });
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -49,6 +50,7 @@ export default function AddStudentForm({ onClose }: AddStudentFormProps) {
     setMessage("Student added successfully!");
     setTimeout(() => {
       onClose();
+      setMessage("")
     }, 800);
   };
 
@@ -100,7 +102,7 @@ export default function AddStudentForm({ onClose }: AddStudentFormProps) {
         </select>
       </label>
 
-      {message && <p className="text-sm text-slate-600">{message}</p>}
+      {/* {message && <p className="text-sm text-slate-600">{message}</p>} */}
 
       <div className="flex gap-3 pt-4">
         <button

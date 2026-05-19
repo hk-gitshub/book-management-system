@@ -5,16 +5,17 @@ import { useLibrary } from "@/context/LibraryContext";
 
 interface ReturnBooksFormProps {
     onClose: () => void;
+    setMessage?: any
 }
 
-function ReturnBooksForm({ onClose }: ReturnBooksFormProps) {
+function ReturnBooksForm({ onClose, setMessage }: ReturnBooksFormProps) {
     const { state, dispatch } = useLibrary();
     const activeLoans = useMemo(
         () => state.loans.filter((loan) => loan.status === "active" || loan.status === "overdue"),
         [state.loans]
     );
     const [selectedLoanId, setSelectedLoanId] = useState("");
-    const [message, setMessage] = useState("");
+    // const [message, setMessage] = useState("");
 
     const handleReturn = () => {
         if (!selectedLoanId) {
@@ -31,7 +32,7 @@ function ReturnBooksForm({ onClose }: ReturnBooksFormProps) {
         });
 
         setMessage("Book returned successfully.");
-        onClose();
+        // onClose();
     };
 
     return (
@@ -64,7 +65,7 @@ function ReturnBooksForm({ onClose }: ReturnBooksFormProps) {
                 Process Return
             </button>
 
-            {message ? <p className="text-sm text-slate-600">{message}</p> : null}
+            {/* {message ? <p className="text-sm text-slate-600">{message}</p> : null} */}
         </div>
     );
 }
