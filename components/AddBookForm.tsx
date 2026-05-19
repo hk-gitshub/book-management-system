@@ -109,7 +109,7 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
       <label className="block">
         <span className="text-sm font-medium text-slate-700">Title</span>
         <input
@@ -117,7 +117,7 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
+          className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none sm:rounded-2xl sm:px-4 sm:py-3 sm:text-base"
           placeholder="Enter book title"
           required
         />
@@ -130,7 +130,7 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
           name="author"
           value={formData.author}
           onChange={handleChange}
-          className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
+          className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none sm:rounded-2xl sm:px-4 sm:py-3 sm:text-base"
           placeholder="Enter author name"
           required
         />
@@ -142,7 +142,7 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
           name="category"
           value={formData.category}
           onChange={handleChange}
-          className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
+          className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none sm:rounded-2xl sm:px-4 sm:py-3 sm:text-base"
           required
         >
           <option value="">Select a category</option>
@@ -163,24 +163,24 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
           value={formData.totalCopies}
           onChange={handleChange}
           min="1"
-          className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
+          className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none sm:rounded-2xl sm:px-4 sm:py-3 sm:text-base"
           required
         />
       </label>
 
       {/* {message && <p className="text-sm text-slate-600">{message}</p>} */}
 
-      <div className="flex gap-3 pt-4">
+      <div className="flex flex-col gap-3 pt-3 sm:flex-row sm:pt-4">
         <button
           type="submit"
-          className="flex-1 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
+          className="w-full rounded-full bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 sm:flex-1 sm:px-5 sm:py-3"
         >
           {isEditMode ? "Update Book" : "Add Book"}
         </button>
         <button
           type="button"
           onClick={onClose}
-          className="flex-1 rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+          className="w-full rounded-full border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 sm:flex-1 sm:px-5 sm:py-3"
         >
           Cancel
         </button>
