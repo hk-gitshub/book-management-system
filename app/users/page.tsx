@@ -4,10 +4,13 @@ import { useLibrary } from "../../context/LibraryContext";
 import { useModal } from "../../lib/useModal";
 import Modal from "../../components/Modal";
 import AddStudentForm from "../../components/AddStudentForm";
+import {useState} from 'react'
 
 export default function Users() {
   const { state } = useLibrary();
   const { isOpen, open, close } = useModal();
+  const [message, setMessage] = useState("");
+
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
@@ -25,8 +28,14 @@ export default function Users() {
           </button>
         </div>
 
-        <Modal isOpen={isOpen} onClose={close} title="Add a New Student">
-          <AddStudentForm onClose={close} />
+        <Modal isOpen={isOpen} onClose={()=>{
+          close()
+          setMessage("")
+        }} title="Add a New Student">
+          {
+            message ? <p>{message}</p>
+              :<AddStudentForm onClose={close} setMessage={setMessage} />
+          }
         </Modal>
 
         <section className="grid gap-6 md:grid-cols-2">

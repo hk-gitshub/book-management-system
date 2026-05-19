@@ -7,11 +7,12 @@ import type { Book } from "../lib/types";
 interface AddBookFormProps {
   onClose: () => void;
   bookToEdit?: Book;
+  setMessage?: any
 }
 
-export default function AddBookForm({ onClose, bookToEdit }: AddBookFormProps) {
+export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBookFormProps) {
   const { dispatch, state } = useLibrary();
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
   const [formData, setFormData] = useState({
     title: bookToEdit?.title ?? "",
     author: bookToEdit?.author ?? "",
@@ -70,6 +71,7 @@ export default function AddBookForm({ onClose, bookToEdit }: AddBookFormProps) {
       setMessage("Book updated successfully!");
       setTimeout(() => {
         onClose();
+        setMessage("")
       }, 800);
       return;
     }
@@ -88,6 +90,7 @@ export default function AddBookForm({ onClose, bookToEdit }: AddBookFormProps) {
     setMessage("Book added successfully!");
     setTimeout(() => {
       onClose();
+      setMessage("")
     }, 800);
   };
 
@@ -147,7 +150,7 @@ export default function AddBookForm({ onClose, bookToEdit }: AddBookFormProps) {
         />
       </label>
 
-      {message && <p className="text-sm text-slate-600">{message}</p>}
+      {/* {message && <p className="text-sm text-slate-600">{message}</p>} */}
 
       <div className="flex gap-3 pt-4">
         <button

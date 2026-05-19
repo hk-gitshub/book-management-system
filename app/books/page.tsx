@@ -13,6 +13,8 @@ export default function Books() {
   const { isOpen: isEditOpen, open: openEdit, close: closeEdit } = useModal();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const [message, setMessage] = useState("");
+
 
   const filteredBooks = useMemo(
     () =>
@@ -79,11 +81,25 @@ export default function Books() {
           </div>
 
         <Modal isOpen={isOpen} onClose={close} title="Add a New Book">
-          <AddBookForm onClose={close} />
+          {
+            message 
+              ? <p>{message}</p>
+              : <AddBookForm onClose={close} setMessage={setMessage} />
+          }
         </Modal>
 
         <Modal isOpen={isEditOpen} onClose={() => { setEditingBook(null); closeEdit(); }} title="Edit Book">
-          <AddBookForm onClose={() => { setEditingBook(null); closeEdit(); }} bookToEdit={editingBook ?? undefined} />
+
+          {
+            message 
+              ? <p>{message}</p>
+              :
+              <AddBookForm 
+                onClose={() => { setEditingBook(null); closeEdit(); }} 
+                bookToEdit={editingBook ?? undefined} 
+                setMessage={setMessage}
+                />
+          }
         </Modal>
 
         <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">

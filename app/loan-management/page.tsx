@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useLibrary } from "../../context/LibraryContext";
 import { useModal } from "@/lib/useModal";
 import Modal from "@/components/Modal";
@@ -11,6 +11,9 @@ export default function LoanManagement() {
   const { state } = useLibrary();
   const { isOpen: isIssueOpen, open: openIssue, close: closeIssue } = useModal();
   const { isOpen: isReturnOpen, open: openReturn, close: closeReturn } = useModal();
+
+  const [message, setMessage] = useState("");
+  
 
   const activeLoans = useMemo(
     () => state.loans.filter((loan) => loan.status === "active" || loan.status === "overdue"),
@@ -28,25 +31,43 @@ export default function LoanManagement() {
 
           <div className="flex gap-5">
             <button
-              onClick={openIssue}
+              onClick={()=>{
+                openIssue()
+                setMessage("")
+              }}
               className="rounded-full bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-700"
             >
               Issue a Book
             </button>
 
             <Modal isOpen={isIssueOpen} onClose={closeIssue} title="Issue a New Book">
-              <IssueBooksForm onClose={closeIssue} />
+              {
+              message ? <p>{message}</p>
+              : <IssueBooksForm onClose={closeIssue} setMessage={setMessage}/>
+              }
             </Modal>
 
+            {/* <Modal isOpen={true} onClose={()=>()} title="">
+
+              Congretualation 
+            </Modal> */}
+
             <button
-              onClick={openReturn}
+              onClick={()=>{
+                openReturn()
+                setMessage("")
+              }}
               className="rounded-full bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-700"
             >
               Return Book
             </button>
 
             <Modal isOpen={isReturnOpen} onClose={closeReturn} title="Return a Book">
-              <ReturnBooksForm onClose={closeReturn} />
+              {
+                message 
+                  ? <p>{message}</p>
+                  : <ReturnBooksForm onClose={closeReturn} setMessage={setMessage}/>
+              }
             </Modal>
           </div>
         </div>
