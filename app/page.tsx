@@ -9,8 +9,11 @@ export default function Home() {
 
   const analytics = useMemo(() => {
     const totalBooks = state.books.length;
-    const activeLoans = state.loans.filter((loan) => loan.status === "active" || loan.status === "overdue").length;
-    const overdueLoans = state.loans.filter((loan) => loan.status === "overdue").length;
+    let activeLoans = 0;
+    let overdueLoans = 0;
+    let returnedLoans = 0;
+    let dueSoonCount = 0;
+    const loanCountByStudent = new Map<string, number>();
     const topCategory = state.books.reduce<Record<string, number>>((counts, book) => {
       counts[book.category] = (counts[book.category] ?? 0) + book.borrowCount;
       return counts;
@@ -21,31 +24,46 @@ export default function Home() {
       .sort((a, b) => b.borrowCount - a.borrowCount)
       .slice(0, 3);
 
-    const studentLoanCounts = state.students.map((student) => ({
-      id: student.id,
-      name: student.name,
-      loanCount: state.loans.filter((loan) => loan.studentId === student.id).length,
-    }));
+    const today = new Date();
+    const dueSoonDate = new Date(today);
+    dueSoonDate.setDate(today.getDate() + 3);
 
-    const topStudents = [...studentLoanCounts]
+    for (const loan of state.loans) {
+      loanCountByStudent.set(
+        loan.studentId,
+        (loanCountByStudent.get(loan.studentId) ?? 0) + 1
+      );
+
+      if (loan.status === "active" || loan.status === "overdue") {
+        activeLoans += 1;
+      }
+
+      if (loan.status === "overdue") {
+        overdueLoans += 1;
+      }
+
+      if (loan.status === "returned") {
+        returnedLoans += 1;
+      }
+
+      const dueDate = new Date(loan.dueDate);
+      if (loan.status === "active" && dueDate >= today && dueDate <= dueSoonDate) {
+        dueSoonCount += 1;
+      }
+    }
+
+    const topStudents = state.students
+      .map((student) => ({
+        id: student.id,
+        name: student.name,
+        loanCount: loanCountByStudent.get(student.id) ?? 0,
+      }))
       .sort((a, b) => b.loanCount - a.loanCount)
       .slice(0, 3);
 
     const categoryBorrowingCounts = Object.entries(topCategory)
       .map(([category, count]) => ({ category, count }))
       .sort((a, b) => b.count - a.count);
-
-    const today = new Date();
-    const dueSoonDate = new Date(today);
-    dueSoonDate.setDate(today.getDate() + 3);
-    const dueSoonCount = state.loans.filter(
-      (loan) =>
-        loan.status === "active" &&
-        new Date(loan.dueDate) >= today &&
-        new Date(loan.dueDate) <= dueSoonDate
-    ).length;
-
-    const returnedLoans = state.loans.filter((loan) => loan.status === "returned").length;
 
     return {
       totalBooks,

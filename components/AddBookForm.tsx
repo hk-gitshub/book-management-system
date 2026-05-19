@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useLibrary } from "../context/LibraryContext";
+import Button from "./ui/Button";
+import { getBookKey } from "../lib/normalization";
 import type { Book } from "../lib/types";
+import type { Dispatch, SetStateAction } from "react";
 
 interface AddBookFormProps {
   onClose: () => void;
   bookToEdit?: Book;
-  setMessage?: any
+  setMessage: Dispatch<SetStateAction<string>>;
 }
 
 export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBookFormProps) {
@@ -20,26 +23,20 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
     totalCopies: bookToEdit?.totalCopies ?? 1,
   });
 
-  useEffect(() => {
-    if (bookToEdit) {
-      setFormData({
-        title: bookToEdit.title,
-        author: bookToEdit.author,
-        category: bookToEdit.category,
-        totalCopies: bookToEdit.totalCopies,
-      });
-    } else {
-      setFormData({ title: "", author: "", category: "", totalCopies: 1 });
-    }
-  }, [bookToEdit]);
-
   const isEditMode = Boolean(bookToEdit);
+  const bookKeys = useMemo(() => {
+    return new Set(
+      state.books
+        .filter((book) => book.id !== bookToEdit?.id)
+        .map((book) => getBookKey(book.title, book.author))
+    );
+  }, [bookToEdit?.id, state.books]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "totalCopies" ? parseInt(value) : value,
+      [name]: name === "totalCopies" ? Number(value) : value,
     }));
   };
 
@@ -51,16 +48,11 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
     //   return;
     // }
 
-        const title = formData.title.trim();
+    const title = formData.title.trim();
     const author = formData.author.trim();
+    const category = formData.category.trim();
 
-    const bookExists = state.books.some(
-      (book) =>
-        book.title.trim().toLowerCase() === title.toLowerCase() &&
-        book.author.trim().toLowerCase() === author.toLowerCase()
-    );
-
-    if (bookExists) {
+    if (bookKeys.has(getBookKey(title, author))) {
       setMessage("This book already exists.");
       return;
     }
@@ -74,9 +66,9 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
 
       const updatedBook: Book = {
         ...bookToEdit,
-        title: formData.title,
-        author: formData.author,
-        category: formData.category,
+        title,
+        author,
+        category,
         totalCopies: formData.totalCopies,
         availableCopies: bookToEdit.availableCopies + (formData.totalCopies - bookToEdit.totalCopies),
       };
@@ -92,9 +84,9 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
 
     const newBook: Book = {
       id: `b${Date.now()}`,
-      title: formData.title,
-      author: formData.author,
-      category: formData.category,
+      title,
+      author,
+      category,
       totalCopies: formData.totalCopies,
       availableCopies: formData.totalCopies,
       borrowCount: 0,
@@ -171,19 +163,19 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
       {/* {message && <p className="text-sm text-slate-600">{message}</p>} */}
 
       <div className="flex flex-col gap-3 pt-3 sm:flex-row sm:pt-4">
-        <button
+        <Button
           type="submit"
-          className="w-full rounded-full bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 sm:flex-1 sm:px-5 sm:py-3"
+          className="w-full sm:flex-1"
         >
           {isEditMode ? "Update Book" : "Add Book"}
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
           onClick={onClose}
-          className="w-full rounded-full border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 sm:flex-1 sm:px-5 sm:py-3"
+          variant="secondary"
+          className="w-full sm:flex-1"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -4,12 +4,16 @@ import { useLibrary } from "../../context/LibraryContext";
 import { useModal } from "../../lib/useModal";
 import Modal from "../../components/Modal";
 import AddStudentForm from "../../components/AddStudentForm";
-import {useState} from 'react'
+import Button from "../../components/ui/Button";
+import { useMemo, useState } from "react";
 
 export default function Users() {
   const { state } = useLibrary();
   const { isOpen, open, close } = useModal();
   const [message, setMessage] = useState("");
+  const booksById = useMemo(() => {
+    return new Map(state.books.map((book) => [book.id, book]));
+  }, [state.books]);
 
 
   return (
@@ -20,12 +24,13 @@ export default function Users() {
             <h1 className="break-words text-2xl font-semibold text-slate-900 sm:text-3xl">Students</h1>
             <p className="mt-2 text-slate-600">Review student records, active loans, and borrowing history.</p>
           </div>
-          <button
+          <Button
             onClick={open}
-            className="shrink-0 self-start whitespace-nowrap rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 md:self-auto"
+            size="sm"
+            className="shrink-0 self-start whitespace-nowrap md:self-auto"
           >
             + Add Student
-          </button>
+          </Button>
         </div>
 
         <Modal isOpen={isOpen} onClose={()=>{
@@ -47,7 +52,7 @@ export default function Users() {
               <ul className="mt-4 space-y-2 break-words text-sm text-slate-600">
                 {student.borrowedBooks.length > 0 ? (
                   student.borrowedBooks.map((bookId) => (
-                    <li key={bookId}>• {state.books.find((book) => book.id === bookId)?.title ?? bookId}</li>
+                    <li key={bookId}>- {booksById.get(bookId)?.title ?? bookId}</li>
                   ))
                 ) : (
                   <li>No active loans</li>

@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { useLibrary } from "@/context/LibraryContext";
+import Button from "./ui/Button";
+import type { Dispatch, SetStateAction } from "react";
 
 interface ReturnBooksFormProps {
     onClose: () => void;
-    setMessage?: any
+    setMessage: Dispatch<SetStateAction<string>>;
 }
 
 function ReturnBooksForm({ onClose, setMessage }: ReturnBooksFormProps) {
@@ -14,6 +16,12 @@ function ReturnBooksForm({ onClose, setMessage }: ReturnBooksFormProps) {
         () => state.loans.filter((loan) => loan.status === "active" || loan.status === "overdue"),
         [state.loans]
     );
+    const booksById = useMemo(() => {
+        return new Map(state.books.map((book) => [book.id, book]));
+    }, [state.books]);
+    const studentsById = useMemo(() => {
+        return new Map(state.students.map((student) => [student.id, student]));
+    }, [state.students]);
     const [selectedLoanId, setSelectedLoanId] = useState("");
     // const [message, setMessage] = useState("");
 
@@ -32,7 +40,10 @@ function ReturnBooksForm({ onClose, setMessage }: ReturnBooksFormProps) {
         });
 
         setMessage("Book returned successfully.");
-        // onClose();
+        setTimeout(() => {
+            onClose();
+            setMessage("");
+        }, 800);
     };
 
     return (
@@ -46,8 +57,8 @@ function ReturnBooksForm({ onClose, setMessage }: ReturnBooksFormProps) {
                 >
                     <option value="">Choose a loan</option>
                     {activeLoans.map((loan) => {
-                        const student = state.students.find((item) => item.id === loan.studentId);
-                        const book = state.books.find((item) => item.id === loan.bookId);
+                        const student = studentsById.get(loan.studentId);
+                        const book = booksById.get(loan.bookId);
                         return (
                             <option key={loan.loanId} value={loan.loanId}>
                                 {student?.name} — {book?.title} ({loan.status})
@@ -57,13 +68,11 @@ function ReturnBooksForm({ onClose, setMessage }: ReturnBooksFormProps) {
                 </select>
             </label>
 
-            <button
-                type="button"
+            <Button
                 onClick={handleReturn}
-                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
             >
                 Process Return
-            </button>
+            </Button>
 
             {/* {message ? <p className="text-sm text-slate-600">{message}</p> : null} */}
         </div>
