@@ -46,8 +46,22 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.author || !formData.category) {
-      setMessage("Please fill all fields.");
+    // if (!formData.title || !formData.author || !formData.category) {
+    //   setMessage("Please fill all fields.");
+    //   return;
+    // }
+
+        const title = formData.title.trim();
+    const author = formData.author.trim();
+
+    const bookExists = state.books.some(
+      (book) =>
+        book.title.trim().toLowerCase() === title.toLowerCase() &&
+        book.author.trim().toLowerCase() === author.toLowerCase()
+    );
+
+    if (bookExists) {
+      setMessage("This book already exists.");
       return;
     }
 
@@ -105,6 +119,7 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
           onChange={handleChange}
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
           placeholder="Enter book title"
+          required
         />
       </label>
 
@@ -117,6 +132,7 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
           onChange={handleChange}
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
           placeholder="Enter author name"
+          required
         />
       </label>
 
@@ -127,6 +143,7 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
           value={formData.category}
           onChange={handleChange}
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
+          required
         >
           <option value="">Select a category</option>
           {state.categories.map((cat) => (
@@ -147,6 +164,7 @@ export default function AddBookForm({ onClose, bookToEdit, setMessage }: AddBook
           onChange={handleChange}
           min="1"
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
+          required
         />
       </label>
 

@@ -80,7 +80,10 @@ export default function Books() {
             </div>
           </div>
 
-        <Modal isOpen={isOpen} onClose={close} title="Add a New Book">
+        <Modal isOpen={isOpen} onClose={()=>{
+          close()
+          setMessage("")
+        }} title="Add a New Book">
           {
             message 
               ? <p>{message}</p>

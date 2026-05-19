@@ -10,7 +10,7 @@ interface AddStudentFormProps {
 }
 
 export default function AddStudentForm({ onClose, setMessage }: AddStudentFormProps) {
-  const { dispatch } = useLibrary();
+  const {state, dispatch } = useLibrary();
   const [formData, setFormData] = useState<{
     name: string;
     gender: "" | "Male" | "Female";
@@ -33,8 +33,18 @@ export default function AddStudentForm({ onClose, setMessage }: AddStudentFormPr
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.gender || !formData.grade) {
-      setMessage("Please fill all fields.");
+    const name= formData.name.trim()
+
+    const studentExist = state.students.some(
+            (student)=>(
+              student.name.trim().toLowerCase() === name.toLowerCase()
+              && 
+              student.grade === formData.grade
+            ))
+
+    if(studentExist){
+      setMessage(`${formData.name} is already exist in the ${formData.grade} grade.`)
+
       return;
     }
 
@@ -65,6 +75,7 @@ export default function AddStudentForm({ onClose, setMessage }: AddStudentFormPr
           onChange={handleChange}
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
           placeholder="Enter student name"
+          required
         />
       </label>
 
@@ -75,6 +86,7 @@ export default function AddStudentForm({ onClose, setMessage }: AddStudentFormPr
           value={formData.gender}
           onChange={handleChange}
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
+          required
         >
           <option value="">Select a Gender</option>
           {["Male", "Female"].map((gender) => (
@@ -92,6 +104,7 @@ export default function AddStudentForm({ onClose, setMessage }: AddStudentFormPr
           value={formData.grade}
           onChange={handleChange}
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
+          required
         >
           <option value="">Select a grade</option>
           {["8", "9", "10", "11", "12"].map((grade) => (
