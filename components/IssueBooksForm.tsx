@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useLibrary } from "@/context/LibraryContext";
+import Button from "./ui/Button";
+import type { Dispatch, SetStateAction } from "react";
 
 interface IssueBooksFormProps {
   onClose: () => void;
-  setMessage?: any
+  setMessage: Dispatch<SetStateAction<string>>;
 }
 
 function IssueBooksForm({ onClose, setMessage }: IssueBooksFormProps) {
@@ -18,6 +20,17 @@ function IssueBooksForm({ onClose, setMessage }: IssueBooksFormProps) {
     return date.toISOString().slice(0, 10);
   });
   // const [message, setMessage] = useState("");
+  const booksById = useMemo(() => {
+    return new Map(state.books.map((book) => [book.id, book]));
+  }, [state.books]);
+
+  const activeLoanKeys = useMemo(() => {
+    return new Set(
+      state.loans
+        .filter((loan) => loan.status !== "returned")
+        .map((loan) => `${loan.studentId}:${loan.bookId}`)
+    );
+  }, [state.loans]);
 
   const handleIssue = () => {
     if (!selectedStudent || !selectedBook) {
@@ -25,7 +38,7 @@ function IssueBooksForm({ onClose, setMessage }: IssueBooksFormProps) {
       return;
     }
 
-    const book = state.books.find((item) => item.id === selectedBook);
+    const book = booksById.get(selectedBook);
     if (!book) {
       setMessage("Selected book not found.");
       return;
@@ -36,14 +49,7 @@ function IssueBooksForm({ onClose, setMessage }: IssueBooksFormProps) {
       return;
     }
 
-    const duplicateLoan = state.loans.some(
-      (loan) =>
-        loan.bookId === selectedBook &&
-        loan.studentId === selectedStudent &&
-        loan.status !== "returned"
-    );
-
-    if (duplicateLoan) {
+    if (activeLoanKeys.has(`${selectedStudent}:${selectedBook}`)) {
       setMessage("This student already has an active loan for the selected book.");
       return;
     }
@@ -63,8 +69,10 @@ function IssueBooksForm({ onClose, setMessage }: IssueBooksFormProps) {
     });
 
     setMessage("Congrtualation, Book issued successfully.");
-    // onClose();
-    // setMessage("")
+    setTimeout(() => {
+      onClose();
+      setMessage("");
+    }, 800);
   };
 
   return (
@@ -76,7 +84,7 @@ function IssueBooksForm({ onClose, setMessage }: IssueBooksFormProps) {
           onChange={(event) => setSelectedStudent(event.target.value)}
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
         >
-          <option value="">Chooes a Student</option>
+          <option value="">Choose a Student</option>
           {state.students.map((student) => (
             <option key={student.id} value={student.id}>
               {student.name}
@@ -92,7 +100,7 @@ function IssueBooksForm({ onClose, setMessage }: IssueBooksFormProps) {
           onChange={(event) => setSelectedBook(event.target.value)}
           className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none"
         >
-          <option value="">Chooes a Book</option>
+          <option value="">Choose a Book</option>
           {state.books.map((book) => (
             <option key={book.id} value={book.id}>
               {book.title} ({book.availableCopies} available)
@@ -111,13 +119,11 @@ function IssueBooksForm({ onClose, setMessage }: IssueBooksFormProps) {
         />
       </label>
 
-      <button
-        type="button"
+      <Button
         onClick={handleIssue}
-        className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
       >
         Issue Book
-      </button>
+      </Button>
 
       {/* {message ? <p className="text-sm text-slate-600">{message}</p> : null} */}
     </div>

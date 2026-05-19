@@ -6,6 +6,7 @@ import { useModal } from "@/lib/useModal";
 import Modal from "@/components/Modal";
 import IssueBooksForm from "@/components/IssueBooksForm";
 import ReturnBooksForm from "@/components/ReturnBooksForm";
+import Button from "@/components/ui/Button";
 
 export default function LoanManagement() {
   const { state } = useLibrary();
@@ -19,6 +20,12 @@ export default function LoanManagement() {
     () => state.loans.filter((loan) => loan.status === "active" || loan.status === "overdue"),
     [state.loans]
   );
+  const booksById = useMemo(() => {
+    return new Map(state.books.map((book) => [book.id, book]));
+  }, [state.books]);
+  const studentsById = useMemo(() => {
+    return new Map(state.students.map((student) => [student.id, student]));
+  }, [state.students]);
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
@@ -30,15 +37,16 @@ export default function LoanManagement() {
           </div>
 
           <div className="flex flex-row flex-wrap items-start gap-3 md:shrink-0 md:flex-nowrap">
-            <button
+            <Button
               onClick={()=>{
                 openIssue()
                 setMessage("")
               }}
-              className="shrink-0 whitespace-nowrap rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+              size="sm"
+              className="shrink-0 whitespace-nowrap"
             >
               Issue a Book
-            </button>
+            </Button>
 
             <Modal isOpen={isIssueOpen} onClose={closeIssue} title="Issue a New Book">
               {
@@ -52,15 +60,16 @@ export default function LoanManagement() {
               Congretualation 
             </Modal> */}
 
-            <button
+            <Button
               onClick={()=>{
                 openReturn()
                 setMessage("")
               }}
-              className="shrink-0 whitespace-nowrap rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+              size="sm"
+              className="shrink-0 whitespace-nowrap"
             >
               Return Book
-            </button>
+            </Button>
 
             <Modal isOpen={isReturnOpen} onClose={closeReturn} title="Return a Book">
               {
@@ -79,8 +88,8 @@ export default function LoanManagement() {
               <p className="text-slate-600 sm:col-span-2 lg:col-span-4">No active loans at the moment.</p>
             ) : (
               activeLoans.map((loan) => {
-                const student = state.students.find((item) => item.id === loan.studentId);
-                const book = state.books.find((item) => item.id === loan.bookId);
+                const student = studentsById.get(loan.studentId);
+                const book = booksById.get(loan.bookId);
                 return (
                   <div key={loan.loanId} className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:rounded-3xl sm:p-5">
                     <p className="break-words font-semibold text-slate-900">{book?.title ?? loan.bookId}</p>

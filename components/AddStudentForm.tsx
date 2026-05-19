@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useLibrary } from "../context/LibraryContext";
+import Button from "./ui/Button";
+import { getStudentKey } from "../lib/normalization";
 import type { Student } from "../lib/types";
+import type { Dispatch, SetStateAction } from "react";
 
 interface AddStudentFormProps {
   onClose: () => void;
-  setMessage: any
+  setMessage: Dispatch<SetStateAction<string>>;
 }
 
 export default function AddStudentForm({ onClose, setMessage }: AddStudentFormProps) {
@@ -21,6 +24,11 @@ export default function AddStudentForm({ onClose, setMessage }: AddStudentFormPr
     grade: "",
   });
   // const [message, setMessage] = useState("");
+  const studentKeys = useMemo(() => {
+    return new Set(
+      state.students.map((student) => getStudentKey(student.name, student.grade))
+    );
+  }, [state.students]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -33,16 +41,9 @@ export default function AddStudentForm({ onClose, setMessage }: AddStudentFormPr
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const name= formData.name.trim()
+    const name = formData.name.trim();
 
-    const studentExist = state.students.some(
-            (student)=>(
-              student.name.trim().toLowerCase() === name.toLowerCase()
-              && 
-              student.grade === formData.grade
-            ))
-
-    if(studentExist){
+    if(studentKeys.has(getStudentKey(name, formData.grade))){
       setMessage(`${formData.name} is already exist in the ${formData.grade} grade.`)
 
       return;
@@ -50,7 +51,7 @@ export default function AddStudentForm({ onClose, setMessage }: AddStudentFormPr
 
     const newStudent: Student = {
       id: `s${Date.now()}`,
-      name: formData.name,
+      name,
       gender: formData.gender,
       grade: formData.grade,
       borrowedBooks: [],
@@ -117,20 +118,20 @@ export default function AddStudentForm({ onClose, setMessage }: AddStudentFormPr
 
       {/* {message && <p className="text-sm text-slate-600">{message}</p>} */}
 
-      <div className="flex gap-3 pt-4">
-        <button
+      <div className="flex flex-col gap-3 pt-3 sm:flex-row sm:pt-4">
+        <Button
           type="submit"
-          className="flex-1 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
+          className="w-full sm:flex-1"
         >
           Add Student
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
           onClick={onClose}
-          className="flex-1 rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+          variant="secondary"
+          className="w-full sm:flex-1"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

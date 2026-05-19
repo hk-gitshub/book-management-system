@@ -5,6 +5,7 @@ import { useLibrary } from "../../context/LibraryContext";
 import { useModal } from "../../lib/useModal";
 import Modal from "../../components/Modal";
 import AddBookForm from "../../components/AddBookForm";
+import Button from "../../components/ui/Button";
 import type { Book } from "../../lib/types";
 
 export default function Books() {
@@ -38,12 +39,13 @@ export default function Books() {
               <h1 className="break-words text-2xl font-semibold text-slate-900 sm:text-3xl">Books</h1>
               <p className="mt-2 text-slate-600">View the library inventory, book categories, availability, and borrow counts.</p>
             </div>
-            <button
+            <Button
               onClick={open}
-              className="shrink-0 self-start whitespace-nowrap rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 md:self-auto"
+              size="sm"
+              className="shrink-0 self-start whitespace-nowrap md:self-auto"
             >
               + Add Book
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -118,12 +120,13 @@ export default function Books() {
                     <h2 className="break-words text-base font-semibold text-slate-900">{book.title}</h2>
                     <p className="mt-1 break-words text-sm text-slate-600">{book.author}</p>
                   </div>
-                  <button
+                  <Button
                     onClick={() => handleEditClick(book)}
-                    className="shrink-0 rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-slate-700"
+                    size="xs"
+                    className="shrink-0 uppercase tracking-[0.1em]"
                   >
                     Edit
-                  </button>
+                  </Button>
                 </div>
 
                 <dl className="mt-4 grid grid-cols-3 gap-3 text-sm">
@@ -174,12 +177,13 @@ export default function Books() {
                     <td className="px-4 py-4 text-right text-sm font-semibold text-slate-900 lg:px-6">{book.availableCopies}</td>
                     <td className="px-4 py-4 text-right text-sm text-slate-600 lg:px-6">{book.borrowCount}</td>
                     <td className="px-4 py-4 text-right text-sm lg:px-6">
-                      <button
+                      <Button
                         onClick={() => handleEditClick(book)}
-                        className="rounded-full bg-slate-900 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-slate-700 lg:px-4 lg:tracking-[0.16em]"
+                        size="xs"
+                        className="uppercase tracking-[0.12em] lg:px-4 lg:tracking-[0.16em]"
                       >
                         Edit
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))
